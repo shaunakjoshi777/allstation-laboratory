@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — AllStation Laboratory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>/* ============================================
+   ALLSTATION LABORATORY — Main Stylesheet
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=EB+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap');
+
+:root {
+  --blue-primary:   #6B9AC4;
+  --blue-light:     #A8C5E0;
+  --blue-dark:      #4A7C9E;
+  --blue-pale:      #E8F1F8;
+  --brown-warm:     #8B7355;
+  --brown-light:    #C4B5A0;
+  --brown-pale:     #F5F0E8;
+  --white:          #FFFFFF;
+  --off-white:      #F8F9FA;
+  --sand-beige:     #E8E3D5;
+  --text-dark:      #2C3E50;
+  --text-medium:    #546E7A;
+  --text-light:     #7F9BA6;
+  --nav-height:     64px;
+  --max-width:      1200px;
+  --radius:         8px;
+  --shadow:         0 4px 20px rgba(0,0,0,0.08);
+  --shadow-hover:   0 10px 32px rgba(107,154,196,0.22);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Crimson Text', Georgia, serif;
+  color: var(--text-dark);
+  background: transparent;
+  overflow-x: hidden;
+  line-height: 1.7;
+}
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--sand-beige); }
+::-webkit-scrollbar-thumb { background: var(--blue-light); border-radius: 3px; }
+
+/* ── NAVIGATION ── */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  height: var(--nav-height);
+  background: var(--brown-warm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2.5rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+.nav-logo {
+  font-family: 'Times New Roman', serif;
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.92);
+  letter-spacing: 0.06em;
+  transition: opacity 0.3s;
+}
+.nav-logo:hover { opacity: 0.75; }
+.nav-links { display: flex; gap: 2.2rem; align-items: center; }
+.nav-links a {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
+  transition: color 0.25s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -3px; left: 0; right: 0;
+  height: 1px;
+  background: rgba(255,255,255,0.6);
+  transform: scaleX(0);
+  transition: transform 0.25s;
+}
+.nav-links a:hover { color: #fff; }
+.nav-links a:hover::after,
+.nav-links a.active::after { transform: scaleX(1); }
+.nav-links a.active { color: #fff; }
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+.hamburger span { display: block; width: 24px; height: 2px; background: rgba(255,255,255,0.9); border-radius: 2px; transition: all 0.3s; }
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* ── LANDSCAPE BACKGROUND ── */
+.landscape-bg {
+  position: fixed; inset: 0; z-index: -2;
+  background: linear-gradient(180deg,
+    #b8d4e8 0%, #c9e0f0 15%,
+    #d8ecd8 38%, #c8e0b8 55%,
+    #b8d4a0 70%, #a8c888 85%, #98bc70 100%
+  );
+}
+.landscape-svg {
+  position: fixed; inset: 0; z-index: -1;
+  width: 100%; height: 100%; opacity: 0.85;
+}
+.landscape-overlay {
+  position: fixed; inset: 0; z-index: -1;
+  background: rgba(0,0,0,0);
+}
+
+/* ── TRAIN ──
+   Track sits at a fixed % from bottom.
+   Train wheels sit ON the track (not above it).
+   Home: track at 20% from bottom.
+   Other pages: track at 10% from bottom.
+*/
+.train-track {
+  position: fixed;
+  left: 0; right: 0;
+  height: 8px;
+  z-index: 9;
+  pointer-events: none;
+}
+/* train-container matches the track position exactly;
+   the train SVG is positioned so wheels sit on the track line */
+.train-container {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+  pointer-events: none;
+  overflow: hidden;
+  /* height = train SVG height (75px) + a little room */
+  height: 84px;
+}
+/* align bottom of train-container with top of track */
+/* set per-page via inline style: bottom = track-bottom + 8px */
+
+.train-wrapper {
+  position: absolute;
+  bottom: 0;           /* wheels at bottom of container = on the track */
+  animation: trainJourney 16s ease-in-out forwards;
+  opacity: 0;
+}
+@keyframes trainJourney {
+  0%   { transform: translateX(-700px); opacity: 0; }
+  4%   { opacity: 1; }
+  93%  { opacity: 1; }
+  100% { transform: translateX(calc(100vw + 700px)); opacity: 0; }
+}
+
+/* ── HOME HERO ── */
+.home-page { min-height: 100vh; display: flex; flex-direction: column; }
+.hero {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  min-height: 100vh;
+  padding: var(--nav-height) 2rem 0;
+  text-align: center;
+  position: relative;
+}
+.hero-content {
+  position: relative; z-index: 2;
+  animation: fadeUp 1.2s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.allstation-title {
+  font-family: 'Times New Roman', serif;
+  font-size: clamp(4rem, 10vw, 8.5rem);
+  font-weight: 300;
+  color: #A8D4F0;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.7), 0 0 60px rgba(30,80,140,0.5), 0 4px 4px rgba(0,0,0,0.3);
+}
+.hero-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(0.78rem, 1.8vw, 1rem);
+  font-weight: 300;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.95);
+  text-shadow: 0 1px 8px rgba(0,0,0,0.55);
+  margin-bottom: 0.35rem;
+  animation: fadeUp 1.2s ease 0.2s both;
+}
+.hero-tagline {
+  font-family: 'Crimson Text', serif;
+  font-style: italic;
+  font-size: 1.2rem;
+  color: rgba(255,255,255,0.90);
+  margin-top: 0.6rem;
+  animation: fadeUp 1.2s ease 0.4s both;
+}
+.hero-divider { margin: 2rem auto; display: block; animation: fadeUp 1.2s ease 0.5s both; }
+.hero-cta { display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap; animation: fadeUp 1.2s ease 0.6s both; margin-top: 2rem; }
+.btn {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.75rem 2rem;
+  border-radius: 40px;
+  border: 1.5px solid var(--blue-primary);
+  transition: all 0.3s ease; cursor: pointer;
+}
+.btn-primary { background: var(--blue-primary); color: #fff; }
+.btn-primary:hover { background: var(--blue-dark); border-color: var(--blue-dark); transform: translateY(-2px); box-shadow: 0 6px 18px rgba(107,154,196,0.4); }
+.btn-secondary { background: rgba(255,255,255,0.18); color: #ffffff; border-color: rgba(255,255,255,0.75); backdrop-filter: blur(4px); }
+.btn-secondary:hover { background: rgba(255,255,255,0.30); transform: translateY(-2px); border-color: #ffffff; }
+
+/* ── PAGES ── */
+.page-content { padding-top: calc(var(--nav-height) + 3rem); padding-bottom: 8rem; min-height: 100vh; }
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2.5rem 2.5rem 3rem;
+  background: rgba(255,255,255,0.86);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 14px;
+  box-shadow: 0 6px 40px rgba(0,0,0,0.16);
+}
+.page-header { margin-bottom: 3.5rem; animation: fadeUp 0.8s ease both; }
+.page-header h1 { font-family: 'Times New Roman', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; color: var(--text-dark); margin-bottom: 0.5rem; }
+.page-header .header-sub { font-family: 'Inter', sans-serif; font-size: 0.85rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-light); }
+.wavy-underline { display: block; margin: 0.6rem 0 0; }
+
+/* ── SECTION DIVIDER (for projects page sections) ── */
+.section-divider {
+  margin: 3.5rem 0 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.section-divider h2 {
+  font-family: 'Times New Roman', serif;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 400;
+  color: var(--text-dark);
+  white-space: nowrap;
+}
+.section-divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, var(--blue-light), transparent);
+}
+.section-tag {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--blue-primary);
+  background: var(--blue-pale);
+  border: 1px solid var(--blue-light);
+  padding: 0.2rem 0.65rem;
+  border-radius: 20px;
+}
+
+/* ── PROJECT CARDS ── */
+.projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+.project-card {
+  background: var(--white);
+  border: 2px solid var(--blue-primary);
+  border-radius: var(--radius);
+  padding: 1.8rem;
+  box-shadow: var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
+  position: relative; overflow: hidden;
+  animation: fadeUp 0.7s ease both;
+}
+.project-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(107,154,196,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+.project-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); border-color: var(--blue-dark); }
+.project-image {
+  width: 100%; height: 160px;
+  background: var(--blue-pale); border-radius: 5px;
+  margin-bottom: 1.2rem; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.project-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+.project-card:hover .project-image img { transform: scale(1.04); }
+.project-meta { font-family: 'Inter', sans-serif; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue-primary); margin-bottom: 0.5rem; }
+.project-title { font-family: 'Times New Roman', serif; font-size: 1.12rem; font-weight: 400; color: var(--text-dark); margin-bottom: 0.7rem; line-height: 1.4; }
+.project-summary { font-family: 'Crimson Text', serif; font-size: 0.98rem; color: var(--text-medium); line-height: 1.6; margin-bottom: 1rem; }
+.project-finding { background: rgba(107,154,196,0.08); border-left: 3px solid var(--blue-primary); padding: 0.7rem 0.9rem; margin-bottom: 1.2rem; border-radius: 0 4px 4px 0; }
+.project-finding strong { font-family: 'Inter', sans-serif; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue-dark); display: block; margin-bottom: 0.25rem; }
+.project-finding p { font-family: 'Crimson Text', serif; font-size: 0.95rem; color: var(--text-dark); line-height: 1.5; }
+.read-more { font-family: 'Inter', sans-serif; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue-dark); font-weight: 500; display: inline-flex; align-items: center; gap: 0.4rem; transition: gap 0.25s, color 0.25s; }
+.read-more:hover { color: var(--blue-primary); gap: 0.7rem; }
+.project-card.placeholder { border-style: dashed; border-color: var(--brown-light); background: var(--brown-pale); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 280px; color: var(--text-light); }
+.placeholder-icon { font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.5; }
+.project-card.placeholder .project-title { color: var(--text-light); font-style: italic; }
+
+/* Article cards (slightly different style - warm toned) */
+.articles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; }
+.article-card {
+  background: var(--white);
+  border: 1.5px solid var(--brown-light);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: fadeUp 0.7s ease both;
+}
+.article-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(139,115,85,0.18); }
+.article-meta { font-family: 'Inter', sans-serif; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brown-warm); margin-bottom: 0.5rem; }
+.article-title { font-family: 'Times New Roman', serif; font-size: 1.08rem; font-weight: 400; color: var(--text-dark); margin-bottom: 0.6rem; line-height: 1.45; }
+.article-summary { font-family: 'Crimson Text', serif; font-size: 0.95rem; color: var(--text-medium); line-height: 1.6; margin-bottom: 1rem; }
+.article-link { font-family: 'Inter', sans-serif; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brown-warm); font-weight: 500; display: inline-flex; align-items: center; gap: 0.4rem; transition: gap 0.25s, color 0.25s; }
+.article-link:hover { color: var(--text-dark); gap: 0.7rem; }
+
+/* ── ABOUT PAGE ── */
+.about-section { margin-bottom: 4rem; animation: fadeUp 0.8s ease both; }
+.about-section h2 { font-family: 'Times New Roman', serif; font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 400; color: var(--text-dark); margin-bottom: 0.4rem; }
+.about-section p { font-family: 'Crimson Text', serif; font-size: 1.08rem; color: var(--text-medium); line-height: 1.85; max-width: 68ch; margin-bottom: 1.1rem; }
+.about-divider { border: none; border-top: 1px solid var(--sand-beige); margin: 3.5rem 0; }
+.about-creator { display: grid; grid-template-columns: 240px 1fr; gap: 3rem; align-items: start; }
+.creator-photo { width: 100%; aspect-ratio: 3/4; border-radius: var(--radius); overflow: hidden; background: var(--blue-pale); border: 2px solid var(--blue-light); box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center; }
+.creator-photo img { width: 100%; height: 100%; object-fit: cover; }
+.photo-placeholder { font-size: 4rem; opacity: 0.35; user-select: none; }
+.creator-links { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1.5rem; }
+.creator-link { font-family: 'Inter', sans-serif; font-size: 0.82rem; letter-spacing: 0.06em; color: var(--blue-dark); display: flex; align-items: center; gap: 0.5rem; transition: color 0.2s, gap 0.2s; }
+.creator-link:hover { color: var(--blue-primary); gap: 0.8rem; }
+.highlight-box { background: var(--blue-pale); border: 1px solid var(--blue-light); border-radius: var(--radius); padding: 1.2rem 1.5rem; margin: 1.5rem 0; }
+.highlight-box p { font-style: italic; color: var(--blue-dark); margin: 0; }
+
+/* ── FOOTER ── */
+.footer { background: var(--brown-warm); color: rgba(255,255,255,0.85); padding: 2.5rem 2rem; text-align: center; position: relative; z-index: 5; }
+.footer-inner { max-width: var(--max-width); margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
+.footer-brand { font-family: 'Times New Roman', serif; font-size: 1.1rem; letter-spacing: 0.12em; color: rgba(255,255,255,0.7); }
+.social-links { display: flex; gap: 2rem; align-items: center; flex-wrap: wrap; justify-content: center; }
+.social-links a { font-family: 'Inter', sans-serif; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.75); display: flex; align-items: center; gap: 0.4rem; transition: color 0.25s; }
+.social-links a:hover { color: #fff; }
+.footer-copy { font-family: 'Inter', sans-serif; font-size: 0.72rem; letter-spacing: 0.06em; color: rgba(255,255,255,0.4); }
+
+/* ── SCROLL REVEAL ── */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  .projects-grid { grid-template-columns: repeat(2, 1fr); }
+  .articles-grid  { grid-template-columns: repeat(2, 1fr); }
+  .about-creator  { grid-template-columns: 200px 1fr; gap: 2rem; }
+}
+@media (max-width: 768px) {
+  .nav-links { display: none; position: fixed; top: var(--nav-height); left: 0; right: 0; background: var(--brown-warm); flex-direction: column; padding: 1.5rem 2rem; gap: 1.5rem; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+  .nav-links.open { display: flex; }
+  .hamburger { display: flex; }
+  .projects-grid { grid-template-columns: 1fr; }
+  .articles-grid  { grid-template-columns: 1fr; }
+  .about-creator  { grid-template-columns: 1fr; }
+  .creator-photo  { width: 160px; aspect-ratio: 1/1; margin: 0 auto; }
+}
+@media (max-width: 480px) {
+  .hero-cta { flex-direction: column; align-items: center; }
+  .btn { width: 100%; max-width: 240px; text-align: center; justify-content: center; }
+  .navbar { padding: 0 1.2rem; }
+  .container { padding: 0 1.2rem; }
+  .page-content { padding-top: calc(var(--nav-height) + 2rem); }
+}
+
+/* ── TRAIN FIXES ── */
+/* Track: fixed only on homepage; absolute (at page bottom) on inner pages.
+   Controlled via .track-fixed vs .track-absolute classes. */
+.train-track {
+  left: 0; right: 0;
+  height: 8px;
+  z-index: 9;
+  pointer-events: none;
+}
+.track-fixed   { position: fixed;    bottom: 18%; }
+.track-absolute { position: absolute; bottom: 100px; }  /* sits above footer */
+
+/* Train container always matches track */
+.train-container {
+  left: 0; width: 100%;
+  z-index: 10; pointer-events: none;
+  overflow: visible;   /* allow SVG shadow to show */
+  height: 90px;
+}
+.train-fixed    { position: fixed;    bottom: calc(18% + 8px); }
+.train-absolute { position: absolute; bottom: 108px; }
+
+/* Wrapper starts hidden, JS drives it */
+.train-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  will-change: transform;
+  /* NO CSS animation here — JS handles it via requestAnimationFrame */
+}
+
+/* Richer landscape overlay — less washed out */
+.landscape-overlay {
+  position: fixed; inset: 0; z-index: -1;
+  background: rgba(0,0,0,0);
+}
+</style>
+</head>
+<body>
+  <div class="landscape-bg" style="background:linear-gradient(180deg,#1A5490 0%,#3278B8 18%,#60A045 42%,#4A8830 62%,#387020 80%,#285810 100%)"></div>
+  <svg class="landscape-svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice"
+       xmlns="http://www.w3.org/2000/svg" style="opacity:1">
+    <defs>
+      <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="#2C6FA8"/>
+        <stop offset="40%"  stop-color="#4A90C8"/>
+        <stop offset="75%"  stop-color="#72B8E0"/>
+        <stop offset="100%" stop-color="#A8D4B8"/>
+      </linearGradient>
+      <linearGradient id="mtn1" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="#6080A0"/>
+        <stop offset="100%" stop-color="#405870"/>
+      </linearGradient>
+      <linearGradient id="mtn2" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="#708860"/>
+        <stop offset="100%" stop-color="#506840"/>
+      </linearGradient>
+      <linearGradient id="hill1" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="#5A9840"/>
+        <stop offset="100%" stop-color="#3D7828"/>
+      </linearGradient>
+      <linearGradient id="hill2" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="#70AA50"/>
+        <stop offset="100%" stop-color="#508838"/>
+      </linearGradient>
+      <linearGradient id="fgrd" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="#68A04A"/>
+        <stop offset="100%" stop-color="#486830"/>
+      </linearGradient>
+      <filter id="sfblur"><feGaussianBlur stdDeviation="1.5"/></filter>
+      <filter id="mblur"><feGaussianBlur stdDeviation="3"/></filter>
+    </defs>
+
+    <!-- SKY -->
+    <rect width="1440" height="900" fill="url(#skyG)"/>
+
+    <!-- SUN -->
+    <circle cx="1180" cy="105" r="80" fill="rgba(255,235,80,0.14)" filter="url(#mblur)"/>
+    <circle cx="1180" cy="105" r="52" fill="rgba(255,240,100,0.30)" filter="url(#sfblur)"/>
+    <circle cx="1180" cy="105" r="34" fill="rgba(255,248,140,0.68)"/>
+    <circle cx="1180" cy="105" r="22" fill="rgba(255,252,180,0.90)"/>
+    <!-- Sun rays -->
+    <g stroke="rgba(255,248,140,0.28)" stroke-width="2" transform="translate(1180,105)">
+      <line x1="0" y1="-62" x2="0" y2="-85"/>
+      <line x1="44" y1="-44" x2="60" y2="-60"/>
+      <line x1="62" y1="0"  x2="86" y2="0"/>
+      <line x1="44" y1="44" x2="60" y2="60"/>
+      <line x1="-44" y1="44" x2="-60" y2="60"/>
+      <line x1="-62" y1="0" x2="-86" y2="0"/>
+      <line x1="-44" y1="-44" x2="-60" y2="-60"/>
+    </g>
+
+    <!-- CLOUDS — crisp, bright, well-defined -->
+    <g filter="url(#sfblur)">
+      <!-- Cloud A: large left -->
+      <ellipse cx="210" cy="148" rx="105" ry="36" fill="white" opacity="0.96"/>
+      <ellipse cx="162" cy="162" rx="65"  ry="28" fill="white" opacity="0.95"/>
+      <ellipse cx="268" cy="158" rx="78"  ry="30" fill="white" opacity="0.94"/>
+      <ellipse cx="210" cy="135" rx="68"  ry="26" fill="white" opacity="0.90"/>
+      <!-- Cloud B: right of centre -->
+      <ellipse cx="820" cy="118" rx="120" ry="40" fill="white" opacity="0.94"/>
+      <ellipse cx="764" cy="132" rx="76"  ry="30" fill="white" opacity="0.92"/>
+      <ellipse cx="886" cy="128" rx="88"  ry="32" fill="white" opacity="0.91"/>
+      <ellipse cx="820" cy="104" rx="72"  ry="28" fill="white" opacity="0.88"/>
+      <!-- Cloud C: far right smaller -->
+      <ellipse cx="1060" cy="175" rx="78" ry="26" fill="white" opacity="0.88"/>
+      <ellipse cx="1022" cy="185" rx="50" ry="21" fill="white" opacity="0.86"/>
+      <ellipse cx="1104" cy="182" rx="56" ry="20" fill="white" opacity="0.85"/>
+    </g>
+    <!-- Cloud shadow/depth (unblurred base) -->
+    <ellipse cx="210" cy="170" rx="95" ry="14" fill="rgba(160,195,220,0.22)"/>
+    <ellipse cx="820" cy="148" rx="108" ry="16" fill="rgba(160,195,220,0.20)"/>
+
+    <!-- DISTANT MOUNTAINS -->
+    <path d="M-20 510 Q90 360 220 410 Q340 460 460 350 Q580 240 700 320
+             Q820 400 960 300 Q1100 200 1240 290 Q1360 360 1460 330 L1460 900 L-20 900 Z"
+          fill="url(#mtn1)" opacity="0.72"/>
+    <!-- Snow caps -->
+    <path d="M460 350 Q490 305 520 350 Z" fill="rgba(235,245,255,0.55)"/>
+    <path d="M960 300 Q995 248 1028 300 Z" fill="rgba(235,245,255,0.50)"/>
+    <path d="M700 320 Q730 280 758 320 Z" fill="rgba(235,245,255,0.40)"/>
+
+    <!-- MIDDLE HILLS -->
+    <path d="M-20 590 Q140 510 300 550 Q460 590 620 520 Q780 450 940 510
+             Q1100 570 1260 510 Q1380 465 1460 480 L1460 900 L-20 900 Z"
+          fill="url(#mtn2)" opacity="0.78"/>
+    <path d="M-20 650 Q200 588 400 620 Q600 652 800 590 Q1000 528 1200 578
+             Q1350 615 1460 590 L1460 900 L-20 900 Z"
+          fill="url(#hill1)" opacity="0.85"/>
+
+    <!-- FOREGROUND HILLS -->
+    <path d="M-20 720 Q240 668 480 695 Q720 722 960 668 Q1160 622 1460 660
+             L1460 900 L-20 900 Z"
+          fill="url(#hill2)" opacity="0.90"/>
+
+    <!-- GROUND -->
+    <path d="M-20 800 Q360 768 720 782 Q1080 796 1460 768 L1460 900 L-20 900 Z"
+          fill="url(#fgrd)" opacity="0.95"/>
+
+    <!-- WILDFLOWER FIELDS (deeper yellow) -->
+    <ellipse cx="260"  cy="745" rx="155" ry="48" fill="rgba(210,185,30,0.38)"/>
+    <ellipse cx="900"  cy="730" rx="140" ry="42" fill="rgba(210,185,30,0.32)"/>
+    <ellipse cx="1300" cy="755" rx="110" ry="36" fill="rgba(210,185,30,0.28)"/>
+    <!-- Wildflower texture: dots -->
+    <g fill="rgba(220,200,20,0.65)">
+      <circle cx="120" cy="822" r="2.8"/><circle cx="138" cy="812" r="2.2"/>
+      <circle cx="156" cy="826" r="2.8"/><circle cx="174" cy="816" r="2"/>
+      <circle cx="192" cy="830" r="2.5"/><circle cx="215" cy="818" r="2.8"/>
+      <circle cx="238" cy="834" r="2"/><circle cx="262" cy="822" r="2.5"/>
+      <circle cx="285" cy="838" r="2.8"/><circle cx="308" cy="825" r="2"/>
+      <circle cx="330" cy="840" r="2.5"/><circle cx="1080" cy="818" r="2.8"/>
+      <circle cx="1105" cy="830" r="2.2"/><circle cx="1130" cy="820" r="2.5"/>
+      <circle cx="1155" cy="835" r="2.8"/><circle cx="1180" cy="822" r="2"/>
+      <circle cx="1210" cy="838" r="2.5"/><circle cx="1240" cy="826" r="2.8"/>
+      <circle cx="1270" cy="842" r="2"/><circle cx="1300" cy="830" r="2.5"/>
+    </g>
+    <g fill="rgba(255,255,255,0.70)">
+      <circle cx="148" cy="828" r="2"/><circle cx="200" cy="836" r="2.2"/>
+      <circle cx="248" cy="844" r="1.8"/><circle cx="298" cy="832" r="2"/>
+      <circle cx="1118" cy="836" r="2"/><circle cx="1168" cy="842" r="1.8"/>
+      <circle cx="1222" cy="830" r="2.2"/><circle cx="1258" cy="848" r="2"/>
+    </g>
+
+    <!-- LEFT TREE CLUSTER (detailed) -->
+    <g transform="translate(40,548)">
+      <!-- Background pines -->
+      <polygon points="22,-10 44,48 0,48"    fill="#2A5E28" opacity="0.82"/>
+      <polygon points="22,4   46,58 -2,58"   fill="#336830" opacity="0.78"/>
+      <rect x="18" y="58" width="8" height="20" fill="#4A3220" opacity="0.80"/>
+      <polygon points="62,-6  86,52 38,52"   fill="#246022" opacity="0.80"/>
+      <polygon points="62,8   88,62 36,62"   fill="#306830" opacity="0.76"/>
+      <rect x="58" y="62" width="8" height="17" fill="#4A3220" opacity="0.80"/>
+      <!-- Tall foreground pine -->
+      <polygon points="42,-22 68,44 16,44"   fill="#2E6630" opacity="0.92"/>
+      <polygon points="42,-6  70,56 14,56"   fill="#3A7838" opacity="0.88"/>
+      <polygon points="42,10  72,66 12,66"   fill="#468840" opacity="0.84"/>
+      <rect x="38" y="66" width="8" height="24" fill="#4A3220" opacity="0.82"/>
+      <!-- Deciduous -->
+      <ellipse cx="100" cy="24" rx="26" ry="32" fill="#3E8030" opacity="0.86"/>
+      <ellipse cx="100" cy="12" rx="20" ry="24" fill="#50924" opacity="0.80"/>
+      <rect x="96" y="52" width="8" height="26" fill="#4A3220" opacity="0.78"/>
+    </g>
+    <g transform="translate(168,562)">
+      <ellipse cx="28" cy="22" rx="30" ry="36" fill="#388030" opacity="0.88"/>
+      <ellipse cx="28" cy="10" rx="24" ry="26" fill="#489840" opacity="0.82"/>
+      <rect x="24" y="54" width="8" height="28" fill="#4A3220" opacity="0.80"/>
+    </g>
+
+    <!-- RIGHT TREE CLUSTER -->
+    <g transform="translate(1248,538)">
+      <polygon points="24,-8  48,50 0,50"    fill="#2A5E28" opacity="0.82"/>
+      <polygon points="24,6   50,60 -2,60"   fill="#336830" opacity="0.78"/>
+      <rect x="20" y="60" width="8" height="20" fill="#4A3220" opacity="0.80"/>
+      <polygon points="65,-4  90,54 40,54"   fill="#246022" opacity="0.80"/>
+      <polygon points="65,10  92,64 38,64"   fill="#306830" opacity="0.76"/>
+      <rect x="61" y="64" width="8" height="17" fill="#4A3220" opacity="0.80"/>
+      <polygon points="44,-20 70,46 18,46"   fill="#2E6630" opacity="0.92"/>
+      <polygon points="44,-4  72,58 16,58"   fill="#3A7838" opacity="0.88"/>
+      <polygon points="44,12  74,68 14,68"   fill="#468840" opacity="0.84"/>
+      <rect x="40" y="68" width="8" height="22" fill="#4A3220" opacity="0.82"/>
+      <ellipse cx="104" cy="26" rx="28" ry="34" fill="#3E8030" opacity="0.86"/>
+      <ellipse cx="104" cy="14" rx="22" ry="25" fill="#509240" opacity="0.80"/>
+      <rect x="100" y="56" width="8" height="24" fill="#4A3220" opacity="0.78"/>
+    </g>
+    <g transform="translate(1368,558)">
+      <ellipse cx="24" cy="20" rx="26" ry="32" fill="#388030" opacity="0.88"/>
+      <ellipse cx="24" cy="9"  rx="20" ry="23" fill="#489840" opacity="0.82"/>
+      <rect x="20" y="48" width="8" height="26" fill="#4A3220" opacity="0.80"/>
+    </g>
+
+    <!-- MID-DISTANCE TREES (hazy silhouettes) -->
+    <g opacity="0.58">
+      <ellipse cx="460" cy="628" rx="20" ry="28" fill="#3A7030"/>
+      <rect x="457" y="654" width="6" height="16" fill="#4A3220"/>
+      <ellipse cx="502" cy="618" rx="25" ry="32" fill="#347028"/>
+      <rect x="499" y="648" width="6" height="20" fill="#4A3220"/>
+      <ellipse cx="938" cy="622" rx="22" ry="30" fill="#3A7030"/>
+      <rect x="935" y="650" width="6" height="18" fill="#4A3220"/>
+      <ellipse cx="982" cy="610" rx="26" ry="34" fill="#347028"/>
+      <rect x="979" y="642" width="6" height="22" fill="#4A3220"/>
+    </g>
+
+    <!-- BIRDS -->
+    <g stroke="#1A2830" stroke-width="1.4" fill="none" opacity="0.45">
+      <path d="M350 195 Q356 188 362 195"/>
+      <path d="M368 190 Q374 183 380 190"/>
+      <path d="M374 202 Q380 195 386 202"/>
+      <path d="M590 162 Q597 155 604 162"/>
+      <path d="M608 168 Q615 161 622 168"/>
+    </g>
+  </svg>
+  <div class="landscape-overlay"></div>
+  <nav class="navbar">
+    <a class="nav-logo" href="index.html" style="display:flex;align-items:center;gap:0.6rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="36" height="36" style="flex-shrink:0">
+          <circle cx="50" cy="50" r="46" fill="white" stroke="rgba(255,255,255,0.85)" stroke-width="2.5"/>
+          <line x1="50" y1="15" x2="19" y2="83" stroke="#2C3E50" stroke-width="6.5" stroke-linecap="round"/>
+          <line x1="50" y1="15" x2="81" y2="83" stroke="#2C3E50" stroke-width="6.5" stroke-linecap="round"/>
+          <line x1="29" y1="58" x2="71" y2="58" stroke="#2C3E50" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="29" y1="62" x2="71" y2="62" stroke="#2C3E50" stroke-width="2" stroke-linecap="round"/>
+          <line x1="36" y1="62" x2="36" y2="70" stroke="#2C3E50" stroke-width="1.8"/>
+          <line x1="50" y1="62" x2="50" y2="72" stroke="#2C3E50" stroke-width="1.8"/>
+          <line x1="64" y1="62" x2="64" y2="70" stroke="#2C3E50" stroke-width="1.8"/>
+          <path d="M36 70 Q43 74 50 72 Q57 70 64 70" fill="none" stroke="#2C3E50" stroke-width="1.5"/>
+          <rect x="48" y="51" width="14" height="7" rx="1.5" fill="#6B9AC4"/>
+          <path d="M62 52.5 Q65 54.5 65 55 Q65 55.5 62 57.5 Z" fill="#5888B0"/>
+          <rect x="58" y="52.5" width="3.5" height="3.5" rx="0.8" fill="rgba(200,235,255,0.85)"/>
+          <rect x="48" y="54.5" width="14" height="1.2" fill="rgba(255,255,255,0.4)"/>
+          <circle cx="52" cy="58" r="1.5" fill="#3A6280"/>
+          <circle cx="58" cy="58" r="1.5" fill="#3A6280"/>
+          <rect x="36" y="51.5" width="11" height="6.5" rx="1.2" fill="#90BADA"/>
+          <rect x="38" y="52.8" width="3" height="3" rx="0.6" fill="rgba(200,235,255,0.75)"/>
+          <rect x="42.5" y="52.8" width="3" height="3" rx="0.6" fill="rgba(200,235,255,0.75)"/>
+          <circle cx="39" cy="58" r="1.4" fill="#3A6280"/>
+          <circle cx="45" cy="58" r="1.4" fill="#3A6280"/>
+          <rect x="47" y="54.2" width="1" height="1.8" rx="0.3" fill="#5A8AB8"/>
+        </svg>
+      <span>AllStation Laboratory</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="projects.html">Projects</a>
+      <a href="about.html">About</a>
+    </div>
+    <div class="hamburger" aria-label="Menu" role="button" tabindex="0">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+  <main class="page-content" style="position:relative;">
+  <div class="train-track track-absolute">
+    <svg viewBox="0 0 1440 8" preserveAspectRatio="none"
+         xmlns="http://www.w3.org/2000/svg" width="100%" height="8">
+      <line x1="0" y1="2" x2="1440" y2="2" stroke="#7A6548" stroke-width="2.5" opacity="0.65"/>
+      <line x1="0" y1="6" x2="1440" y2="6" stroke="#7A6548" stroke-width="2.5" opacity="0.65"/>
+      <g stroke="#7A6548" stroke-width="1.5" opacity="0.4">
+        <line x1="0" y1="0" x2="0" y2="8"/>
+        <line x1="36" y1="0" x2="36" y2="8"/>
+        <line x1="72" y1="0" x2="72" y2="8"/>
+        <line x1="108" y1="0" x2="108" y2="8"/>
+        <line x1="144" y1="0" x2="144" y2="8"/>
+        <line x1="180" y1="0" x2="180" y2="8"/>
+        <line x1="216" y1="0" x2="216" y2="8"/>
+        <line x1="252" y1="0" x2="252" y2="8"/>
+        <line x1="288" y1="0" x2="288" y2="8"/>
+        <line x1="324" y1="0" x2="324" y2="8"/>
+        <line x1="360" y1="0" x2="360" y2="8"/>
+        <line x1="396" y1="0" x2="396" y2="8"/>
+        <line x1="432" y1="0" x2="432" y2="8"/>
+        <line x1="468" y1="0" x2="468" y2="8"/>
+        <line x1="504" y1="0" x2="504" y2="8"/>
+        <line x1="540" y1="0" x2="540" y2="8"/>
+        <line x1="576" y1="0" x2="576" y2="8"/>
+        <line x1="612" y1="0" x2="612" y2="8"/>
+        <line x1="648" y1="0" x2="648" y2="8"/>
+        <line x1="684" y1="0" x2="684" y2="8"/>
+        <line x1="720" y1="0" x2="720" y2="8"/>
+        <line x1="756" y1="0" x2="756" y2="8"/>
+        <line x1="792" y1="0" x2="792" y2="8"/>
+        <line x1="828" y1="0" x2="828" y2="8"/>
+        <line x1="864" y1="0" x2="864" y2="8"/>
+        <line x1="900" y1="0" x2="900" y2="8"/>
+        <line x1="936" y1="0" x2="936" y2="8"/>
+        <line x1="972" y1="0" x2="972" y2="8"/>
+        <line x1="1008" y1="0" x2="1008" y2="8"/>
+        <line x1="1044" y1="0" x2="1044" y2="8"/>
+        <line x1="1080" y1="0" x2="1080" y2="8"/>
+        <line x1="1116" y1="0" x2="1116" y2="8"/>
+        <line x1="1152" y1="0" x2="1152" y2="8"/>
+        <line x1="1188" y1="0" x2="1188" y2="8"/>
+        <line x1="1224" y1="0" x2="1224" y2="8"/>
+        <line x1="1260" y1="0" x2="1260" y2="8"/>
+        <line x1="1296" y1="0" x2="1296" y2="8"/>
+        <line x1="1332" y1="0" x2="1332" y2="8"/>
+        <line x1="1368" y1="0" x2="1368" y2="8"/>
+        <line x1="1404" y1="0" x2="1404" y2="8"/>
+        <line x1="1440" y1="0" x2="1440" y2="8"/>
+      </g>
+    </svg>
+  </div>
+  <div class="train-container train-absolute">
+    <div class="train-wrapper">
+      <svg viewBox="0 0 520 75" width="520" height="75"
+           xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
+        <!-- Drop shadow under whole train -->
+        <ellipse cx="260" cy="74" rx="240" ry="4.5" fill="rgba(0,0,0,0.12)"/>
+
+        <!-- ══ LOCOMOTIVE (x=372 → x=518) ══ -->
+        <rect x="372" y="10" width="130" height="48" rx="6" fill="#5A8AB8"/>
+        <!-- Nose -->
+        <path d="M502 14 Q526 28 526 34 Q526 42 502 56 Z" fill="#4A7CAA"/>
+        <!-- Cab window -->
+        <rect x="488" y="16" width="14" height="20" rx="3"
+              fill="rgba(195,228,255,0.82)" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+        <!-- Body stripe -->
+        <rect x="372" y="33" width="130" height="6" rx="1" fill="rgba(255,255,255,0.30)"/>
+        <!-- Headlight -->
+        <circle cx="524" cy="32" r="5" fill="rgba(255,244,170,0.95)"/>
+        <circle cx="524" cy="32" r="3" fill="rgba(255,252,210,1)"/>
+        <!-- Pantograph -->
+        <line x1="418" y1="10" x2="406" y2="1" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+        <line x1="418" y1="10" x2="430" y2="1" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+        <line x1="406" y1="1"  x2="430" y2="1" stroke="rgba(255,255,255,0.8)" stroke-width="2"/>
+        <!-- Underframe -->
+        <rect x="374" y="55" width="126" height="7" rx="2" fill="#3D6A9A"/>
+        <!-- Loco wheels — bottom of wheel at y=72 → center y=63, r=9 -->
+        <circle cx="396" cy="63" r="10" fill="#2E5272" stroke="rgba(255,255,255,0.28)" stroke-width="2"/>
+        <circle cx="396" cy="63" r="4.5" fill="#5A8AB8"/>
+        <circle cx="480" cy="63" r="10" fill="#2E5272" stroke="rgba(255,255,255,0.28)" stroke-width="2"/>
+        <circle cx="480" cy="63" r="4.5" fill="#5A8AB8"/>
+        <!-- Coupling right to loco -->
+        <rect x="368" y="33" width="4" height="6" rx="1" fill="#6A90B5"/>
+
+        <!-- ══ CARRIAGE 1 (x=248 → x=364) ══ -->
+        <rect x="250" y="13" width="114" height="44" rx="4" fill="#90BADA"/>
+        <rect x="257" y="20" width="18" height="16" rx="2"
+              fill="rgba(195,228,255,0.74)" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+        <rect x="281" y="20" width="18" height="16" rx="2"
+              fill="rgba(195,228,255,0.74)" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+        <rect x="305" y="20" width="18" height="16" rx="2"
+              fill="rgba(195,228,255,0.74)" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+        <rect x="329" y="20" width="16" height="16" rx="2"
+              fill="rgba(195,228,255,0.65)" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+        <rect x="250" y="37" width="114" height="5" rx="1" fill="rgba(90,138,184,0.45)"/>
+        <rect x="252" y="54" width="110" height="6" rx="2" fill="#70A2C2"/>
+        <circle cx="272" cy="64" r="9" fill="#2E5272" stroke="rgba(255,255,255,0.25)" stroke-width="1.8"/>
+        <circle cx="272" cy="64" r="4" fill="#5A8AB8"/>
+        <circle cx="344" cy="64" r="9" fill="#2E5272" stroke="rgba(255,255,255,0.25)" stroke-width="1.8"/>
+        <circle cx="344" cy="64" r="4" fill="#5A8AB8"/>
+        <rect x="246" y="34" width="4" height="6" rx="1" fill="#6A90B5"/>
+
+        <!-- ══ CARRIAGE 2 (x=128 → x=244) ══ -->
+        <rect x="130" y="13" width="114" height="44" rx="4" fill="#90BADA"/>
+        <rect x="137" y="20" width="18" height="16" rx="2"
+              fill="rgba(195,228,255,0.74)" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+        <rect x="161" y="20" width="18" height="16" rx="2"
+              fill="rgba(195,228,255,0.74)" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+        <rect x="185" y="20" width="18" height="16" rx="2"
+              fill="rgba(195,228,255,0.74)" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+        <rect x="209" y="20" width="16" height="16" rx="2"
+              fill="rgba(195,228,255,0.65)" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+        <rect x="130" y="37" width="114" height="5" rx="1" fill="rgba(90,138,184,0.45)"/>
+        <rect x="132" y="54" width="110" height="6" rx="2" fill="#70A2C2"/>
+        <circle cx="152" cy="64" r="9" fill="#2E5272" stroke="rgba(255,255,255,0.25)" stroke-width="1.8"/>
+        <circle cx="152" cy="64" r="4" fill="#5A8AB8"/>
+        <circle cx="224" cy="64" r="9" fill="#2E5272" stroke="rgba(255,255,255,0.25)" stroke-width="1.8"/>
+        <circle cx="224" cy="64" r="4" fill="#5A8AB8"/>
+        <rect x="126" y="34" width="4" height="6" rx="1" fill="#6A90B5"/>
+
+        <!-- ══ CARRIAGE 3 / TAIL (x=6 → x=122) ══ -->
+        <rect x="8" y="13" width="114" height="44" rx="4" fill="#88B4D4"/>
+        <!-- Rounded tail end -->
+        <path d="M8 13 Q-8 13 -8 35 Q-8 57 8 57 Z" fill="#78A8CC"/>
+        <rect x="15" y="20" width="18" height="16" rx="2"
+              fill="rgba(195,228,255,0.74)" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+        <rect x="39" y="20" width="18" height="16" rx="2"
+              fill="rgba(195,228,255,0.74)" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+        <rect x="63" y="20" width="18" height="16" rx="2"
+              fill="rgba(195,228,255,0.74)" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+        <rect x="87" y="20" width="16" height="16" rx="2"
+              fill="rgba(195,228,255,0.65)" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+        <rect x="8"  y="37" width="114" height="5" rx="1" fill="rgba(90,138,184,0.45)"/>
+        <rect x="10" y="54" width="110" height="6" rx="2" fill="#68A0C0"/>
+        <circle cx="30"  cy="64" r="9" fill="#2E5272" stroke="rgba(255,255,255,0.25)" stroke-width="1.8"/>
+        <circle cx="30"  cy="64" r="4" fill="#5A8AB8"/>
+        <circle cx="102" cy="64" r="9" fill="#2E5272" stroke="rgba(255,255,255,0.25)" stroke-width="1.8"/>
+        <circle cx="102" cy="64" r="4" fill="#5A8AB8"/>
+      </svg>
+    </div>
+  </div>
+    <div style="max-width:860px;margin:0 auto;padding:0 1.5rem;">
+      <div style="background:rgba(255,255,255,0.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:14px;box-shadow:0 6px 40px rgba(0,0,0,0.16);padding:2.5rem;margin-bottom:2rem;">
+      <div class="about-section reveal">
+        <div style="display:flex;align-items:center;gap:1.4rem;margin-bottom:1.4rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="80" height="80">
+          <circle cx="50" cy="50" r="46" fill="white" stroke="#2C3E50" stroke-width="3"/>
+          <line x1="50" y1="15" x2="19" y2="83" stroke="#2C3E50" stroke-width="6.5" stroke-linecap="round"/>
+          <line x1="50" y1="15" x2="81" y2="83" stroke="#2C3E50" stroke-width="6.5" stroke-linecap="round"/>
+          <line x1="29" y1="58" x2="71" y2="58" stroke="#2C3E50" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="29" y1="62" x2="71" y2="62" stroke="#2C3E50" stroke-width="2" stroke-linecap="round"/>
+          <line x1="36" y1="62" x2="36" y2="70" stroke="#2C3E50" stroke-width="1.8"/>
+          <line x1="50" y1="62" x2="50" y2="72" stroke="#2C3E50" stroke-width="1.8"/>
+          <line x1="64" y1="62" x2="64" y2="70" stroke="#2C3E50" stroke-width="1.8"/>
+          <path d="M36 70 Q43 74 50 72 Q57 70 64 70" fill="none" stroke="#2C3E50" stroke-width="1.5"/>
+          <rect x="48" y="51" width="14" height="7" rx="1.5" fill="#6B9AC4"/>
+          <path d="M62 52.5 Q65 54.5 65 55 Q65 55.5 62 57.5 Z" fill="#5888B0"/>
+          <rect x="58" y="52.5" width="3.5" height="3.5" rx="0.8" fill="rgba(200,235,255,0.85)"/>
+          <rect x="48" y="54.5" width="14" height="1.2" fill="rgba(255,255,255,0.4)"/>
+          <circle cx="52" cy="58" r="1.5" fill="#3A6280"/>
+          <circle cx="58" cy="58" r="1.5" fill="#3A6280"/>
+          <rect x="36" y="51.5" width="11" height="6.5" rx="1.2" fill="#90BADA"/>
+          <rect x="38" y="52.8" width="3" height="3" rx="0.6" fill="rgba(200,235,255,0.75)"/>
+          <rect x="42.5" y="52.8" width="3" height="3" rx="0.6" fill="rgba(200,235,255,0.75)"/>
+          <circle cx="39" cy="58" r="1.4" fill="#3A6280"/>
+          <circle cx="45" cy="58" r="1.4" fill="#3A6280"/>
+          <rect x="47" y="54.2" width="1" height="1.8" rx="0.3" fill="#5A8AB8"/>
+        </svg>
+          <div>
+            <p style="font-family:'Inter',sans-serif;font-size:0.78rem;letter-spacing:0.18em;text-transform:uppercase;color:#1A5080;margin-bottom:.3rem;">About</p>
+            <h2 style="margin:0;">What is AllStation Laboratory?</h2>
+          </div>
+        </div>
+        <svg viewBox="0 0 160 12" width="150" height="12" style="margin:.5rem 0 1.5rem;">
+          <path d="M 4 6 Q 40 3, 80 6 T 156 6" stroke="#6B9AC4" stroke-width="2"
+                fill="none" stroke-linecap="round" opacity="0.65"/>
+        </svg>
+        <p>AllStation Laboratory is an independent research initiative building quantitative analyses to answer messy questions about the Indian environment, including infrastructure, energy, and urban systems. Each project combines a mathematical element with a clear question in order to make complex systems legible and actionable.</p>
+        <p>The work draws on applied mathematics, environmental studies, and systems thinking to explore questions like: What are the actual emissions impacts of transport electrification? Will India meet its renewable energy targets? How do infrastructure decisions shape urban outcomes?</p>
+        <p>The aim is to identify vague claims, opaque situations, and interesting contexts, frame them with a straightforward question, and use a mathematical tool to find a clear, actionable answer.</p>
+        <p>ASL emerged when Shaunak stumbled upon the Gehl People Urban Design Studio, and was then hit with the aim of building his own 'studio'. The idea was played with for a while, until the neat intersection between applied mathematics and environmental complex systems was deemed interesting — ultimately leading to AllStation Laboratory.</p>
+        <p>ASL operates as an open repository — all analysis, code, and findings are publicly accessible. The goal is not simply to answer questions, but to demonstrate that rigorous technical analysis can be done independently, clearly, and in service of an improved world.</p>
+        <div class="highlight-box">
+          <p>"All models are wrong, but some are useful" - Dr. George E. P. Box</p>
+        </div>
+      </div>
+      </div>
+      <div style="background:rgba(255,255,255,0.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:14px;box-shadow:0 6px 40px rgba(0,0,0,0.16);padding:2.5rem;">
+      <div class="about-section reveal" style="animation-delay:.15s">
+        <p style="font-family:'Inter',sans-serif;font-size:0.78rem;letter-spacing:0.18em;text-transform:uppercase;color:#1A5080;margin-bottom:.5rem;">Creator</p>
+        <h2>About Shaunak</h2>
+        <svg viewBox="0 0 160 12" width="150" height="12" style="margin:.5rem 0 1.5rem;">
+          <path d="M 4 6 Q 40 3, 80 6 T 156 6" stroke="#6B9AC4" stroke-width="2"
+                fill="none" stroke-linecap="round" opacity="0.65"/>
+        </svg>
+        <div class="about-creator">
+          <div>
+            <div class="creator-photo" style="background:none;border:none;box-shadow:none;border-radius:var(--radius);overflow:hidden;"><img src="images/shaunak-photo.jpg" alt="Shaunak Joshi" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+          </div>
+          <div>
+            <p>AllStation Laboratory is founded and maintained by Shaunak Joshi, a final-year undergraduate student at FLAME University (who attempts at) studying Applied Mathematics with a minor in Environmental Studies.</p>
+            <p>Shaunak's research background includes an internship at DIAT-DRDO, where he worked on aerodynamics problems and co-authored a paper for a conference at IIT Jodhpur. He has also worked at the WageIndicator Foundation for research, and has held leadership roles across academic and extracurricular contexts. His interests sit at the intersection of mathematical modeling, systems, and policy. Hence AllStation. </p>
+            <p>Alongside AllStation, Shaunak runs his own blog on Tumblr, reads a lot, and swims.</p>
+            <div class="creator-links">
+              <a href="https://www.linkedin.com/in/shaunak-joshi-84492a279/" target="_blank" rel="noopener" class="creator-link">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+                LinkedIn — Full background &amp; CV <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+              <a href="https://medium.com/@shaunak.joshi_62540" target="_blank" rel="noopener" class="creator-link">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="4"/><ellipse cx="14" cy="12" rx="3" ry="4"/><ellipse cx="21" cy="12" rx="2" ry="4"/></svg>
+                Medium — Writing &amp; essays <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+              <a href="https://www.tumblr.com/blog/sj-the-great" target="_blank" rel="noopener" class="creator-link">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M14.563 24c-5.093 0-7.031-3.756-7.031-6.411V9.747H5.116V6.648c3.63-1.313 4.512-4.596 4.71-6.469C9.84.051 9.941 0 9.99 0h3.517v6.114h4.801v3.633h-4.82v7.47c.012 1.020.439 2.017 2.088 1.978a5.86 5.86 0 0 0 2.141-.486l1.024 3.569A10.85 10.85 0 0 1 14.563 24z"/></svg>
+                Tumblr — Blog <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+              <a href="mailto:shaunakjoshi777@gmail.com" class="creator-link">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+                shaunakjoshi777@gmail.com <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </main>
+  <footer class="footer">
+    <div class="footer-inner">
+      <span class="footer-brand">AllStation Laboratory</span>
+      <div class="social-links">
+        <a href="https://www.linkedin.com/in/shaunak-joshi-84492a279/" target="_blank" rel="noopener">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+          LinkedIn
+        </a>
+        <a href="https://medium.com/@shaunak.joshi_62540" target="_blank" rel="noopener">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="4"/><ellipse cx="14" cy="12" rx="3" ry="4"/><ellipse cx="21" cy="12" rx="2" ry="4"/></svg>
+          Medium
+        </a>
+        <a href="https://www.tumblr.com/blog/sj-the-great" target="_blank" rel="noopener">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M14.563 24c-5.093 0-7.031-3.756-7.031-6.411V9.747H5.116V6.648c3.63-1.313 4.512-4.596 4.71-6.469C9.84.051 9.941 0 9.99 0h3.517v6.114h4.801v3.633h-4.82v7.47c.012 1.020.439 2.017 2.088 1.978a5.86 5.86 0 0 0 2.141-.486l1.024 3.569A10.85 10.85 0 0 1 14.563 24z"/></svg>
+          Tumblr
+        </a>
+        <a href="mailto:shaunakjoshi777@gmail.com">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+          Contact
+        </a>
+      </div>
+      <p class="footer-copy">© 2026 AllStation Laboratory · Shaunak Joshi</p>
+    </div>
+  </footer>
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Active nav
+  const page = window.location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    if (a.getAttribute('href') === page) a.classList.add('active');
+  });
+  // Hamburger
+  const ham = document.querySelector('.hamburger');
+  const nav = document.querySelector('.nav-links');
+  if (ham && nav) {
+    ham.addEventListener('click', () => { ham.classList.toggle('open'); nav.classList.toggle('open'); });
+    nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      ham.classList.remove('open'); nav.classList.remove('open');
+    }));
+  }
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  if (revealEls.length) {
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }});
+    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+    revealEls.forEach(el => obs.observe(el));
+  }
+  // Train
+  initTrain();
+});
+
+function initTrain() {
+  const wrapper = document.querySelector('.train-wrapper');
+  if (!wrapper) return;
+
+  const TRAIN_W = 520;   // px width of the train SVG
+  const SPEED   = 260;   // px per second
+  const GAP_MIN = 15000; // ms between runs
+  const GAP_RND = 10000;
+
+  let raf = null;
+  let startTime = null;
+  let totalDist = 0;
+
+  function startRun() {
+    totalDist  = window.innerWidth + TRAIN_W * 2;
+    startTime  = null;
+    wrapper.style.opacity   = '0';
+    wrapper.style.transform = `translateX(-${TRAIN_W}px)`;
+    raf = requestAnimationFrame(step);
+  }
+
+  function step(ts) {
+    if (!startTime) startTime = ts;
+    const elapsed = (ts - startTime) / 1000; // seconds
+    const x = -TRAIN_W + elapsed * SPEED;
+
+    // Fade in at start, fade out near end
+    const endX = window.innerWidth + TRAIN_W * 0.4;
+    let opacity = 1;
+    const fadeInEnd  = TRAIN_W * 0.8;
+    const fadeOutStart = endX - TRAIN_W * 0.8;
+    if (x < -TRAIN_W + fadeInEnd)   opacity = Math.max(0, (x + TRAIN_W) / fadeInEnd);
+    if (x > fadeOutStart)            opacity = Math.max(0, (endX - x) / (TRAIN_W * 0.8));
+
+    wrapper.style.transform = `translateX(${x}px)`;
+    wrapper.style.opacity   = opacity;
+
+    i
